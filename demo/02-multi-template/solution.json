@@ -3,7 +3,7 @@
 
   "tenant": {
     "name": "Demo: Multi-Template",
-    "slug": "demo-04-multi-template",
+    "slug": "demo-02-multi-template",
     "description": "Demonstrates sessionTemplates — two templates (formal/casual) with different skills. Use --template to select."
   },
 
@@ -21,7 +21,7 @@
   },
 
   "skills": [
-    { "slug": "formal-responder", "name": "formal-responder" },
-    { "slug": "casual-responder", "name": "casual-responder" }
+    { "slug": "formal-responder", "name": "Formal Responder" },
+    { "slug": "casual-responder", "name": "Casual Responder" }
   ]
 }

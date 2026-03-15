@@ -186,7 +186,7 @@ Phase 3: 逐页生成 (40-60分钟)
 **Claude动作 - 首次执行时**:
 ```python
 # 第一次执行STEP 2时，才加载方法论
-file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skills/mckinsey-consultant/references/methodology.md")
+file_read("references/methodology.md")
 
 # 了解:
 # - MECE原则详解
@@ -218,9 +218,9 @@ file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skill
 **Claude动作 - 首次执行时**:
 ```python
 # 第一次执行STEP 4-5时，才加载设计文档
-file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skills/mckinsey-consultant/references/layouts.md")
-file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skills/mckinsey-consultant/references/design-specs.md")
-file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skills/mckinsey-consultant/references/page-dependencies.md")
+file_read("references/layouts.md")
+file_read("references/design-specs.md")
+file_read("references/page-dependencies.md")
 
 # 了解:
 # - 7种McKinsey页面布局
@@ -363,7 +363,7 @@ file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skill
 **Claude动作 - 首次执行STEP 6时**:
 ```python
 # 只在开始STEP 6时加载Excel规范
-file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skills/mckinsey-consultant/references/excel-data-spec.md")
+file_read("references/excel-data-spec.md")
 
 # 了解Excel数据文件结构
 # 用完后释放
@@ -546,7 +546,7 @@ Claude:
 **Claude动作**:
 ```python
 # 只有用户要Word时才加载
-file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skills/mckinsey-consultant/references/delivery-summary.md")
+file_read("references/delivery-summary.md")
 
 # 了解Word报告结构和格式要求
 # 调用docx skill生成
@@ -563,7 +563,7 @@ file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skill
 **Claude动作**:
 ```python
 # 只有出现问题时才加载
-file_read("/Users/niex/Documents/GitHub/kedge-ccaas/solutions/mckinsey-cli/skills/mckinsey-consultant/references/troubleshooting.md")
+file_read("references/troubleshooting.md")
 
 # 了解常见问题和解决方案
 # 针对性修复

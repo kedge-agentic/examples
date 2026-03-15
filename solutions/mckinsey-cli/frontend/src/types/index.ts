@@ -1,15 +1,3 @@
-/** McKinsey consulting workflow steps */
-export type ConsultingStep =
-  | 'problem-deconstruction'
-  | 'issue-tree'
-  | 'hypotheses'
-  | 'argumentation'
-  | 'dummy-pages'
-  | 'ppt-generation'
-  | 'excel-generation'
-  | 'word-report'
-  | 'optimization'
-
 /** File type icons mapping */
 export const FILE_TYPE_ICONS: Record<string, string> = {
   'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'PPTX',

@@ -1,4 +1,4 @@
-import { Module, Global, OnModuleDestroy, Logger } from '@nestjs/common';
+import { Module, Global, OnModuleDestroy, Inject, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Database from 'better-sqlite3';
 import { mkdirSync, existsSync } from 'fs';
@@ -183,7 +183,14 @@ export const DATABASE_TOKEN = 'DATABASE_CONNECTION';
 export class DatabaseModule implements OnModuleDestroy {
   private readonly logger = new Logger(DatabaseModule.name);
 
+  constructor(@Inject(DATABASE_TOKEN) private readonly db: Database.Database) {}
+
   onModuleDestroy() {
-    this.logger.log('Database connection closed');
+    try {
+      this.db.close();
+      this.logger.log('Database connection closed');
+    } catch (error) {
+      this.logger.error('Failed to close database connection', error);
+    }
   }
 }

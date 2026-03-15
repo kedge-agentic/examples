@@ -24,9 +24,13 @@ if [ -f "$SCRIPT_DIR/solution.config" ]; then
     source "$SCRIPT_DIR/solution.config"
 fi
 
-# Default bootstrap key for internal solutions
-# Can be overridden by setting CCAAS_BOOTSTRAP_KEY environment variable
-CCAAS_BOOTSTRAP_KEY="${CCAAS_BOOTSTRAP_KEY:-sk-default-testd84f5b7a1dbdbc4c424417be6c009f01}"
+# Bootstrap key must be provided via environment variable
+if [ -z "$CCAAS_BOOTSTRAP_KEY" ]; then
+    echo "❌ Error: CCAAS_BOOTSTRAP_KEY environment variable is not set."
+    echo "   Please set it before running setup:"
+    echo "   export CCAAS_BOOTSTRAP_KEY=sk-your-bootstrap-key"
+    exit 1
+fi
 
 # Custom initialization
 custom_init() {

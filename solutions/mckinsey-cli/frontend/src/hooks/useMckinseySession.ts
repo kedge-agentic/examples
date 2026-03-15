@@ -41,9 +41,11 @@ export function useMckinseySession() {
   const status = useAgentStatus({ connection })
 
   // ===== Files =====
+  // Pass sessionId ref directly for proper Vue reactivity tracking.
+  // When sessionId changes (e.g. new conversation), useFiles will pick it up.
   const files = useFiles({
     connection,
-    sessionId: connection.sessionId.value,
+    sessionId: connection.sessionId as unknown as string,
   })
 
   // Convenience: total file count

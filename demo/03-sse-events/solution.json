@@ -8,6 +8,6 @@
   },
 
   "skills": [
-    { "slug": "event-demo", "name": "event-demo" }
+    { "slug": "event-demo", "name": "SSE Event Demo" }
   ]
 }

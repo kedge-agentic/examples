@@ -5,5 +5,17 @@
     "name": "McKinsey Consultant",
     "slug": "mckinsey-cli",
     "description": "McKinsey-style business problem solving consultant"
+  },
+
+  "skills": [
+    { "slug": "mckinsey-consultant", "name": "McKinsey Consultant" }
+  ],
+
+  "sessionTemplates": {
+    "mckinsey": {
+      "description": "McKinsey-style business problem solving session",
+      "enabledSkills": ["mckinsey-consultant"],
+      "skillPromptMode": "inline"
+    }
   }
 }

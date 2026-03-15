@@ -11,8 +11,9 @@
  * 6. get_farmer_loans - Get farmer's loan history
  * 7. get_farmer_summary - Get computed financial/asset summary
  * 8. search_gov_policies - Search government agricultural policies
- * 9. search_loan_products - Search available loan products
- * 10. get_market_prices - Get current market prices
+ * 9. get_policy_document - Get full text of a policy document
+ * 10. search_loan_products - Search available loan products
+ * 11. get_market_prices - Get current market prices
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -68,8 +69,8 @@ Write structured data to the frontend view. The frontend will display a "Sync to
 Example:
 {
   "field": "narrative_profile",
-  "value": "## 农户画像\\n张三，山东省济宁市汶上县农民...",
-  "preview": "农户画像: 张三"
+  "value": "## 农户画像\\n王建国，上海市嘉定区华亭镇农民...",
+  "preview": "农户画像: 王建国"
 }`,
   inputSchema: {
     type: 'object',
@@ -102,17 +103,17 @@ const getFarmerByPhoneTool: Tool = {
   description: `通过手机号查询农户信息。
 Look up a farmer by their phone number.
 
-Returns: farmer record with id, name, phone, id_number, gender, birth_date, address, village, township, county, province, farming_years, education, family_size, household_income, credit_score.
+Returns: farmer record with id, name, phone, gender, age, address, village, township, county, province, city, id_number, farming_years, household_size, annual_income, farmer_type.
 
 Returns error if farmer not found.
 
-Example: { "phone": "13800138001" }`,
+Example: { "phone": "13812345001" }`,
   inputSchema: {
     type: 'object',
     properties: {
       phone: {
         type: 'string',
-        description: '农户手机号 (e.g., "13800138001")',
+        description: '农户手机号 (e.g., "13812345001")',
       },
     },
     required: ['phone'],
@@ -125,7 +126,7 @@ const getFarmerLandTool: Tool = {
   description: `查询农户的土地信息。
 Get all land parcels for a farmer.
 
-Returns: array of land parcels with id, farmer_id, parcel_name, area_mu, land_type (耕地/林地/园地), ownership_type (自有/租赁), soil_quality, irrigation_type, location, certificate_no.
+Returns: array of land parcels with id, farmer_id, parcel_name, area_mu, land_type (水田/菜地/果园), soil_quality, irrigation, contract_start, contract_end, rent_per_mu, is_owned (1=自有/0=租赁).
 
 Example: { "farmer_id": "F001" }`,
   inputSchema: {
@@ -146,7 +147,7 @@ const getFarmerCropsTool: Tool = {
   description: `查询农户的种植记录，可选按年份筛选。
 Get crop records for a farmer, optionally filtered by year.
 
-Returns: array of crop records with id, farmer_id, parcel_id, crop_name, year, season, area_mu, yield_kg, revenue_yuan, cost_yuan, subsidy_yuan.
+Returns: array of crop records with id, farmer_id, land_parcel_id, crop_name, year, season, area_mu, yield_kg, yield_per_mu, revenue, cost, profit, price_per_kg.
 
 Example: { "farmer_id": "F001" }
 Example with year: { "farmer_id": "F001", "year": 2025 }`,
@@ -172,7 +173,7 @@ const getFarmerEquipmentTool: Tool = {
   description: `查询农户的农机设备信息。
 Get equipment owned by a farmer.
 
-Returns: array of equipment with id, farmer_id, equipment_name, equipment_type, brand, purchase_date, purchase_price, current_value, subsidy_amount, status (在用/闲置/报废).
+Returns: array of equipment with id, farmer_id, equipment_type, brand, model, purchase_year, purchase_price, current_value, subsidy_received, status (正常/维修中/报废).
 
 Example: { "farmer_id": "F001" }`,
   inputSchema: {
@@ -193,7 +194,7 @@ const getFarmerLoansTool: Tool = {
   description: `查询农户的贷款历史记录。
 Get loan history for a farmer.
 
-Returns: array of loans with id, farmer_id, bank_name, product_name, loan_amount, remaining_amount, interest_rate, start_date, end_date, status (正常/已结清/逾期), repaid_amount, overdue_days, collateral_type, collateral_value.
+Returns: array of loans with id, farmer_id, bank_name, product_name, amount, interest_rate, term_months, start_date, end_date, status (正常还款/已结清/逾期), purpose, repaid_amount, remaining_amount, is_overdue, overdue_days.
 
 Example: { "farmer_id": "F001" }`,
   inputSchema: {
@@ -250,16 +251,16 @@ const searchGovPoliciesTool: Tool = {
   description: `搜索政府农业政策。
 Search government agricultural policies with optional filters.
 
-Returns: array of policies with id, title, category, region, crop_type, summary, subsidy_amount, eligibility, start_date, end_date, source.
+Returns: array of policies with id, policy_name, category, description, target_audience, benefit_amount, application_method, deadline, region, crop_type, status, source, publish_date, has_full_text.
 
 Filters (all optional):
 - category: 政策类别 (e.g., "种植补贴", "农机补贴", "保险", "贷款贴息")
-- region: 地区 (e.g., "山东省", "济宁市")
-- crop_type: 作物类型 (e.g., "小麦", "玉米")
+- region: 地区 (e.g., "本市", "全国")
+- crop_type: 作物类型 (e.g., "水稻", "蔬菜")
 - keyword: 关键词搜索标题和摘要
 
-Example: { "category": "种植补贴", "region": "山东省" }
-Example: { "keyword": "小麦" }`,
+Example: { "category": "种植补贴", "region": "本市" }
+Example: { "keyword": "水稻" }`,
   inputSchema: {
     type: 'object',
     properties: {
@@ -269,11 +270,11 @@ Example: { "keyword": "小麦" }`,
       },
       region: {
         type: 'string',
-        description: '地区 (e.g., "山东省", "济宁市")',
+        description: '地区 (e.g., "本市", "全国")',
       },
       crop_type: {
         type: 'string',
-        description: '作物类型 (e.g., "小麦", "玉米")',
+        description: '作物类型 (e.g., "水稻", "蔬菜")',
       },
       keyword: {
         type: 'string',
@@ -283,7 +284,7 @@ Example: { "keyword": "小麦" }`,
   },
 };
 
-// Tool 11: get_policy_document
+// Tool 9: get_policy_document
 const getPolicyDocumentTool: Tool = {
   name: 'get_policy_document',
   description: `获取政策文件完整原文。
@@ -310,13 +311,13 @@ Example: { "policy_id": "uuid-of-policy" }`,
   },
 };
 
-// Tool 9: search_loan_products
+// Tool 10: search_loan_products
 const searchLoanProductsTool: Tool = {
   name: 'search_loan_products',
   description: `搜索可用的贷款产品。
 Search available loan products with optional filters.
 
-Returns: array of loan products with id, bank_name, product_name, min_amount, max_amount, interest_rate_min, interest_rate_max, term_months_min, term_months_max, collateral_required, description, eligibility, features.
+Returns: array of loan products with id, bank_name, product_name, description, min_amount, max_amount, interest_rate_min, interest_rate_max, term_months_min, term_months_max, collateral_required, target_audience, features, application_process.
 
 Filters (all optional):
 - bank_name: 银行名称 (e.g., "农业银行", "邮储银行")
@@ -349,7 +350,7 @@ Example: { "max_amount": 100000 }`,
   },
 };
 
-// Tool 10: get_market_prices
+// Tool 11: get_market_prices
 const getMarketPricesTool: Tool = {
   name: 'get_market_prices',
   description: `获取当前农产品和农资市场价格。
@@ -436,6 +437,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (name === 'get_farmer_by_phone') {
     const { phone } = args as { phone: string };
 
+    if (!phone || typeof phone !== 'string') {
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ data: { error: 'Missing required argument: phone (string)' }, status: 'error' } satisfies WriteOutputResult) }],
+        isError: true,
+      };
+    }
+
     try {
       const db = getDb();
       const farmer = db.prepare('SELECT * FROM farmers WHERE phone = ?').get(phone);
@@ -485,6 +493,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (name === 'get_farmer_land') {
     const { farmer_id } = args as { farmer_id: string };
 
+    if (!farmer_id || typeof farmer_id !== 'string') {
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ data: { error: 'Missing required argument: farmer_id (string)' }, status: 'error' } satisfies WriteOutputResult) }],
+        isError: true,
+      };
+    }
+
     try {
       const db = getDb();
       const parcels = db.prepare('SELECT * FROM land_parcels WHERE farmer_id = ?').all(farmer_id);
@@ -522,6 +537,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   // ===== Tool 4: get_farmer_crops =====
   if (name === 'get_farmer_crops') {
     const { farmer_id, year } = args as { farmer_id: string; year?: number };
+
+    if (!farmer_id || typeof farmer_id !== 'string') {
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ data: { error: 'Missing required argument: farmer_id (string)' }, status: 'error' } satisfies WriteOutputResult) }],
+        isError: true,
+      };
+    }
 
     try {
       const db = getDb();
@@ -568,6 +590,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (name === 'get_farmer_equipment') {
     const { farmer_id } = args as { farmer_id: string };
 
+    if (!farmer_id || typeof farmer_id !== 'string') {
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ data: { error: 'Missing required argument: farmer_id (string)' }, status: 'error' } satisfies WriteOutputResult) }],
+        isError: true,
+      };
+    }
+
     try {
       const db = getDb();
       const equipment = db.prepare('SELECT * FROM equipment WHERE farmer_id = ?').all(farmer_id);
@@ -605,6 +634,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   // ===== Tool 6: get_farmer_loans =====
   if (name === 'get_farmer_loans') {
     const { farmer_id } = args as { farmer_id: string };
+
+    if (!farmer_id || typeof farmer_id !== 'string') {
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ data: { error: 'Missing required argument: farmer_id (string)' }, status: 'error' } satisfies WriteOutputResult) }],
+        isError: true,
+      };
+    }
 
     try {
       const db = getDb();
@@ -644,6 +680,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (name === 'get_farmer_summary') {
     const { farmer_id } = args as { farmer_id: string };
 
+    if (!farmer_id || typeof farmer_id !== 'string') {
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ data: { error: 'Missing required argument: farmer_id (string)' }, status: 'error' } satisfies WriteOutputResult) }],
+        isError: true,
+      };
+    }
+
     try {
       const db = getDb();
 
@@ -668,10 +711,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const landRows = db.prepare('SELECT * FROM land_parcels WHERE farmer_id = ?').all(farmer_id) as Record<string, unknown>[];
       const totalLandMu = landRows.reduce((sum, r) => sum + (Number(r.area_mu) || 0), 0);
       const totalOwnedLandMu = landRows
-        .filter(r => r.ownership_type === '自有')
+        .filter(r => r.is_owned === 1)
         .reduce((sum, r) => sum + (Number(r.area_mu) || 0), 0);
       const totalRentedLandMu = landRows
-        .filter(r => r.ownership_type === '租赁')
+        .filter(r => r.is_owned === 0)
         .reduce((sum, r) => sum + (Number(r.area_mu) || 0), 0);
 
       // Crop summary - find latest year
@@ -680,8 +723,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const latestYearCrops = latestYear
         ? allCrops.filter(c => Number(c.year) === latestYear)
         : [];
-      const latestYearRevenue = latestYearCrops.reduce((sum, c) => sum + (Number(c.revenue_yuan) || 0), 0);
-      const latestYearCost = latestYearCrops.reduce((sum, c) => sum + (Number(c.cost_yuan) || 0), 0);
+      const latestYearRevenue = latestYearCrops.reduce((sum, c) => sum + (Number(c.revenue) || 0), 0);
+      const latestYearCost = latestYearCrops.reduce((sum, c) => sum + (Number(c.cost) || 0), 0);
       const latestYearProfit = latestYearRevenue - latestYearCost;
 
       // Average yield per mu across all crops
@@ -693,7 +736,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // Equipment summary
       const equipmentRows = db.prepare('SELECT * FROM equipment WHERE farmer_id = ?').all(farmer_id) as Record<string, unknown>[];
       const totalEquipmentValue = equipmentRows.reduce((sum, e) => sum + (Number(e.current_value) || 0), 0);
-      const totalSubsidyReceived = equipmentRows.reduce((sum, e) => sum + (Number(e.subsidy_amount) || 0), 0);
+      const totalSubsidyReceived = equipmentRows.reduce((sum, e) => sum + (Number(e.subsidy_received) || 0), 0);
 
       // Loan summary
       const loanRows = db.prepare('SELECT * FROM loan_history WHERE farmer_id = ?').all(farmer_id) as Record<string, unknown>[];
@@ -829,9 +872,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
   }
 
-  // ===== Tool 11: get_policy_document =====
+  // ===== Tool 9: get_policy_document =====
   if (name === 'get_policy_document') {
     const { policy_id } = args as { policy_id: string };
+
+    if (!policy_id || typeof policy_id !== 'string') {
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ data: { error: 'Missing required argument: policy_id (string)' }, status: 'error' } satisfies WriteOutputResult) }],
+        isError: true,
+      };
+    }
 
     try {
       const db = getDb();
@@ -906,7 +956,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
   }
 
-  // ===== Tool 9: search_loan_products =====
+  // ===== Tool 10: search_loan_products =====
   if (name === 'search_loan_products') {
     const { bank_name, min_amount, max_amount, keyword } = args as {
       bank_name?: string;
@@ -971,7 +1021,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
   }
 
-  // ===== Tool 10: get_market_prices =====
+  // ===== Tool 11: get_market_prices =====
   if (name === 'get_market_prices') {
     const marketData = {
       grains: [

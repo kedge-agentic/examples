@@ -18,7 +18,7 @@
   },
 
   "skills": [
-    { "slug": "profile-filler", "name": "profile-filler" }
+    { "slug": "profile-filler", "name": "Profile Filler" }
   ],
 
   "syncFields": {

@@ -6,12 +6,12 @@ import * as path from 'path'
 import * as os from 'os'
 import { randomUUID } from 'crypto'
 
-const crypto = { randomUUID }
-
 const BACKEND_URL = process.env.CCAAS_URL || 'http://localhost:3001'
+const API_KEY = process.env.KEDGE_API_KEY || ''
 const TENANT_ID = 'mckinsey-cli'
 const SKILL_SLUG = 'mckinsey-consultant'
-const SESSION_FILE = path.join(os.homedir(), '.mckinsey-session')
+const CONFIG_DIR = path.join(os.homedir(), '.config', 'mckinsey-cli')
+const SESSION_FILE = path.join(CONFIG_DIR, 'session')
 
 interface FileInfo {
   id: string
@@ -20,6 +20,71 @@ interface FileInfo {
   path?: string
 }
 
+/** A node in the file tree returned by the backend */
+interface FileTreeNode {
+  id: string
+  name: string
+  type?: 'file' | 'directory'
+  size?: number
+  path?: string
+  children?: FileTreeNode[]
+}
+
+/** Backend message list response (may be an array or paginated) */
+interface MessageItem {
+  id: string
+  role: 'user' | 'assistant' | 'system'
+  content?: string
+}
+
+interface MessagesResponse {
+  items?: MessageItem[]
+}
+
+/** Backend file tree response */
+interface FileTreeResponse {
+  tree?: FileTreeNode[]
+}
+
+/** Socket event: agent_status */
+interface AgentStatusEvent {
+  status: 'running' | 'complete' | 'idle' | 'error'
+}
+
+/** Socket event: text_delta */
+interface TextDeltaEvent {
+  delta?: string
+}
+
+/** Socket event: tool_activity */
+interface ToolActivityEvent {
+  payload?: {
+    type?: string
+    activityType?: string
+    toolName?: string
+    tool?: string
+  }
+}
+
+/** Socket event: error */
+interface SocketErrorEvent {
+  payload?: {
+    message?: string
+  }
+}
+
+/** Build common request headers including API key auth when configured */
+function authHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {}
+  if (API_KEY) {
+    headers['Authorization'] = `Bearer ${API_KEY}`
+  }
+  return headers
+}
+
+// Ensure config directory exists
+fs.mkdirSync(CONFIG_DIR, { recursive: true })
+
 // Session state
 let SESSION_ID = loadOrCreateSession()
 let clientId = ''
@@ -27,13 +92,9 @@ let isProcessing = false
 const knownFileIds = new Set<string>()
 const sessionFiles: FileInfo[] = []
 
-function generateUUID(): string {
-  return crypto.randomUUID()
-}
-
 function loadOrCreateSession(): string {
   if (process.argv.includes('--new')) {
-    const id = generateUUID()
+    const id = randomUUID()
     fs.writeFileSync(SESSION_FILE, id)
     return id
   }
@@ -44,11 +105,11 @@ function loadOrCreateSession(): string {
       return saved
     }
     // Legacy non-UUID session ID: generate fresh UUID
-    const id = generateUUID()
+    const id = randomUUID()
     fs.writeFileSync(SESSION_FILE, id)
     return id
   } catch {
-    const id = generateUUID()
+    const id = randomUUID()
     fs.writeFileSync(SESSION_FILE, id)
     return id
   }
@@ -60,9 +121,9 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function flattenTree(tree: any[]): FileInfo[] {
+function flattenTree(tree: FileTreeNode[]): FileInfo[] {
   const files: FileInfo[] = []
-  function walk(nodes: any[]) {
+  function walk(nodes: FileTreeNode[]) {
     for (const node of nodes) {
       if (node.type === 'file' || !node.type) {
         files.push({ id: node.id, name: node.name, size: node.size, path: node.path })
@@ -77,21 +138,23 @@ function flattenTree(tree: any[]): FileInfo[] {
 async function checkForNewFiles() {
   try {
     const messagesResp = await fetch(
-      `${BACKEND_URL}/api/v1/sessions/${SESSION_ID}/messages?take=5`
+      `${BACKEND_URL}/api/v1/sessions/${SESSION_ID}/messages?take=5`,
+      { headers: authHeaders() }
     )
     if (!messagesResp.ok) return
 
-    const messages: any = await messagesResp.json()
-    const msgList = Array.isArray(messages) ? messages : messages.items || []
-    const lastMsg = msgList.find((m: any) => m.role === 'assistant')
+    const messages = (await messagesResp.json()) as MessageItem[] | MessagesResponse
+    const msgList: MessageItem[] = Array.isArray(messages) ? messages : messages.items || []
+    const lastMsg = msgList.find((m) => m.role === 'assistant')
     if (!lastMsg) return
 
     const filesResp = await fetch(
-      `${BACKEND_URL}/api/v1/messages/${lastMsg.id}/files`
+      `${BACKEND_URL}/api/v1/messages/${lastMsg.id}/files`,
+      { headers: authHeaders() }
     )
     if (!filesResp.ok) return
 
-    const data: any = await filesResp.json()
+    const data = (await filesResp.json()) as FileTreeResponse
     const files = flattenTree(data.tree || [])
 
     const newFiles = files.filter(f => !knownFileIds.has(f.id))
@@ -107,25 +170,34 @@ async function checkForNewFiles() {
       console.log(chalk.cyan(`  [${n}] ${f.name}${size}`))
     })
     console.log(chalk.dim('  Type /download <n> to save locally, /files to list all'))
-  } catch {
-    // Silently ignore file check errors
+  } catch (err: unknown) {
+    // Log at debug level so file-check failures are visible when troubleshooting
+    const message = err instanceof Error ? err.message : String(err)
+    if (process.env.DEBUG) {
+      console.error(chalk.dim(`[debug] File check failed: ${message}`))
+    }
   }
 }
 
 async function downloadFile(file: FileInfo, dir?: string) {
   try {
-    const resp = await fetch(`${BACKEND_URL}/api/v1/files/${file.id}/download`)
+    const resp = await fetch(`${BACKEND_URL}/api/v1/files/${file.id}/download`, {
+      headers: authHeaders(),
+    })
     if (!resp.ok) {
       console.log(chalk.red(`✗ Download failed: ${resp.statusText}`))
       return
     }
     const buffer = await resp.arrayBuffer()
     const targetDir = dir || process.cwd()
-    const localPath = path.join(targetDir, file.name)
+    // Sanitize filename to prevent directory traversal (e.g. "../../etc/passwd")
+    const safeName = path.basename(file.name)
+    const localPath = path.join(targetDir, safeName)
     fs.writeFileSync(localPath, Buffer.from(buffer))
     console.log(chalk.green(`✓ Saved: ${localPath}`))
-  } catch (err: any) {
-    console.log(chalk.red(`✗ Download error: ${err.message}`))
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.log(chalk.red(`✗ Download error: ${message}`))
   }
 }
 
@@ -136,7 +208,10 @@ console.log(chalk.bold.blue('╚════════════════
 console.log(chalk.dim(`Backend: ${BACKEND_URL} | Session: ${SESSION_ID}`))
 console.log(chalk.dim('Commands: /new  /session  /files  /download <n>  /exit\n'))
 
-const socket = io(BACKEND_URL, { transports: ['websocket', 'polling'] })
+const socket = io(BACKEND_URL, {
+  transports: ['websocket', 'polling'],
+  auth: API_KEY ? { token: API_KEY } : undefined,
+})
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
 
@@ -153,7 +228,7 @@ socket.on('client_id', (data: { clientId: string }) => {
   promptUser()
 })
 
-socket.on('agent_status', async (event: any) => {
+socket.on('agent_status', async (event: AgentStatusEvent) => {
   const status = event?.status
   if (status === 'running') {
     isProcessing = true
@@ -171,12 +246,12 @@ socket.on('agent_status', async (event: any) => {
 })
 
 // Stream text output
-socket.on('text_delta', (event: any) => {
+socket.on('text_delta', (event: TextDeltaEvent) => {
   process.stdout.write(event?.delta || '')
 })
 
 // Show tool activity
-socket.on('tool_activity', (event: any) => {
+socket.on('tool_activity', (event: ToolActivityEvent) => {
   const payload = event?.payload || {}
   const type = payload.type || payload.activityType
   const toolName = payload.toolName || payload.tool
@@ -185,7 +260,7 @@ socket.on('tool_activity', (event: any) => {
   }
 })
 
-socket.on('error', (event: any) => {
+socket.on('error', (event: SocketErrorEvent) => {
   console.error(chalk.red(`\n✗ ${event?.payload?.message || 'Error'}`))
 })
 
@@ -215,7 +290,7 @@ function promptUser() {
 
     // New session
     if (cmd === '/new') {
-      SESSION_ID = generateUUID()
+      SESSION_ID = randomUUID()
       fs.writeFileSync(SESSION_FILE, SESSION_ID)
       sessionFiles.length = 0
       knownFileIds.clear()

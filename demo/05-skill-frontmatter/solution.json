@@ -8,6 +8,6 @@
   },
 
   "skills": [
-    { "slug": "greeting-bot", "name": "greeting-bot" }
+    { "slug": "greeting-bot", "name": "Greeting Bot" }
   ]
 }

@@ -5,9 +5,9 @@ You are an agent designed to generate rich, observable event streams for develop
 When asked to demonstrate events, follow these steps in order:
 
 1. **Think out loud** — share your reasoning step by step (generates `text_delta` events)
-2. **Spawn a background task** using the Task tool with `run_in_background: true` and description "background-demo" — this produces `subagent_started` and `subagent_completed` events
-3. **Use a file tool** (e.g., write a small note to `.demo-output.txt`) — this produces `tool_activity` events
-4. **Summarize** what happened and which event types were generated
+2. **Explain each event type** — describe the SSE events that CCAAS produces: `text_delta`, `agent_status`, `token_usage`, `tool_activity`, and `output_update`
+3. **Provide examples** — show example payloads for each event type so the developer can understand the protocol structure
+4. **Summarize** what the developer should expect to see in the event stream
 
 This skill is designed to be used with `solution-repl.ts` to observe the full event stream:
 
@@ -16,4 +16,4 @@ npx ts-node --project tools/tsconfig.json --transpile-only \
   tools/solution-repl.ts demo-03-sse-events --test "demonstrate events" --timeout 120
 ```
 
-Keep each step brief. The goal is variety of event types, not depth of content.
+Keep each step brief. The goal is clarity about the event protocol, not depth of content.

@@ -41,6 +41,7 @@ Valid fields: ${VALID_FIELDS.join(', ')}`,
         description: 'The form field to update',
       },
       value: {
+        type: 'string',
         description: 'The value for the field (string)',
       },
       preview: {
@@ -69,7 +70,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (!VALID_FIELDS.includes(field as ValidField)) {
       return {
         content: [{ type: 'text', text: JSON.stringify({
-          data: { error: `Invalid field: ${field}. Valid fields: ${VALID_FIELDS.join(', ')}` },
+          error: `Invalid field: ${field}. Valid fields: ${VALID_FIELDS.join(', ')}`,
           status: 'error',
         })}],
         isError: true,
@@ -77,7 +78,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     const payload = OutputUpdatePayloadSchema.parse({
-      data: { field, value, preview },
+      field, value, preview,
       status: 'success',
     })
     return {
@@ -87,7 +88,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   return {
     content: [{ type: 'text', text: JSON.stringify({
-      data: { error: `Unknown tool: ${name}` },
+      error: `Unknown tool: ${name}`,
       status: 'error',
     })}],
     isError: true,

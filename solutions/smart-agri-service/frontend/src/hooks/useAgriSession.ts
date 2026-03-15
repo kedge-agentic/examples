@@ -120,7 +120,9 @@ export function useAgriSession(viewMode: ViewMode, targetSessionId?: string) {
           setDisplayData(restored)
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.warn('[useAgriSession] Failed to restore display data from session events:', err)
+      })
   }, [targetSessionId, connection.connected])
 
   const clearSession = useCallback(() => {

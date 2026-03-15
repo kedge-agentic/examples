@@ -3,11 +3,11 @@
 
   "tenant": {
     "name": "Demo: Pure Chat (No MCP)",
-    "slug": "demo-02-pure-chat",
+    "slug": "demo-01-pure-chat",
     "description": "The simplest possible Solution — just a skill, no MCP servers. Use this as your starting point."
   },
 
   "skills": [
-    { "slug": "friendly-chat", "name": "friendly-chat" }
+    { "slug": "friendly-chat", "name": "Friendly Chat" }
   ]
 }

@@ -31,7 +31,7 @@
   },
 
   "skills": [
-    { "slug": "farmer-advisor", "name": "farmer-advisor" },
-    { "slug": "bank-assessor", "name": "bank-assessor" }
+    { "slug": "farmer-advisor", "name": "智慧农业助手" },
+    { "slug": "bank-assessor", "name": "信贷评估助手" }
   ]
 }

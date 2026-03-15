@@ -3,7 +3,7 @@
 
   "tenant": {
     "name": "Demo: write_output Pattern",
-    "slug": "demo-01-write-output",
+    "slug": "demo-04-write-output",
     "description": "Demonstrates the correct write_output MCP tool pattern — value must be inside content[].text JSON, NOT in _meta"
   },
 
@@ -18,6 +18,6 @@
   },
 
   "skills": [
-    { "slug": "demo-writer", "name": "demo-writer" }
+    { "slug": "demo-writer", "name": "Demo Writer" }
   ]
 }

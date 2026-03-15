@@ -79,7 +79,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (!VALID_FIELDS.includes(field as ValidField)) {
       return {
         content: [{ type: 'text', text: JSON.stringify({
-          data: { error: `Invalid field: ${field}. Valid fields: ${VALID_FIELDS.join(', ')}` },
+          error: `Invalid field: ${field}. Valid fields: ${VALID_FIELDS.join(', ')}`,
           status: 'error',
         })}],
         isError: true,
@@ -89,7 +89,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (!VALID_OPERATIONS.includes(operation as ValidOperation)) {
       return {
         content: [{ type: 'text', text: JSON.stringify({
-          data: { error: `Invalid operation: ${operation}. Valid operations: ${VALID_OPERATIONS.join(', ')}` },
+          error: `Invalid operation: ${operation}. Valid operations: ${VALID_OPERATIONS.join(', ')}`,
           status: 'error',
         })}],
         isError: true,
@@ -97,7 +97,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     const payload = OutputUpdatePayloadSchema.parse({
-      data: { field, value, operation, preview },
+      field, value, operation, preview,
       status: 'success',
     })
     return {
@@ -107,7 +107,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   return {
     content: [{ type: 'text', text: JSON.stringify({
-      data: { error: `Unknown tool: ${name}` },
+      error: `Unknown tool: ${name}`,
       status: 'error',
     })}],
     isError: true,

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
 import type { FileMetadata } from '@kedge-agentic/vue-sdk'
 import FileDownloadCard from './FileDownloadCard.vue'
 
