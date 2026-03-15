@@ -41,26 +41,24 @@ examples/
 
 ## 快速上手
 
-### 1. 启动 KedgeAgentic 后端
+### 1. 运行 Demo
+
+Demo 通过 `setup.sh` 导入到 `https://ccaas.zhushou.one`（核心后端不开源）：
 
 ```bash
-# 参考 KedgeAgentic 平台文档部署后端
-# 默认 http://localhost:3001
+cd demo
+
+# 配置 API Key
+cp .env.example .env
+# 编辑 .env 设置 CCAAS_API_KEY
+
+# 导入任意 Demo
+./setup.sh 01-pure-chat
 ```
 
-### 2. 运行 Demo
+`setup.sh` 自动完成：导入 solution.json → 注册 Skills。后端 URL 可通过 `.env` 中的 `CCAAS_URL` 配置。
 
-Demo 不需要额外服务，直接通过 API 测试：
-
-```bash
-# 导入 demo solution
-curl -X POST http://localhost:3001/api/v1/admin/solutions/import \
-  -H "Authorization: Bearer $API_KEY" \
-  -H "Content-Type: application/json" \
-  -d @demo/01-pure-chat/solution.json
-```
-
-### 3. 运行 Business Solution
+### 2. 运行 Business Solution
 
 每个 Business Solution 都有 `setup.sh` 自动化脚本：
 

@@ -14,8 +14,8 @@
 
 ## 前置条件
 
-- CCAAS 后端运行中：`npm run dev:backend`（默认 port 3001）
 - 一个有效的 API Key（admin 或 builder scope）
+- CCAAS 后端可访问（默认 `https://ccaas.zhushou.one`，核心后端不开源）
 
 ## Demo 列表
 
@@ -183,54 +183,32 @@
 
 ## 运行方式
 
-### 方式一：通过 API 导入
+使用 `setup.sh` 一键导入 Demo 到托管后端：
 
 ```bash
-# 导入 solution 配置到平台
-curl -X POST http://localhost:3001/api/v1/admin/solutions/import \
-  -H "Authorization: Bearer $API_KEY" \
-  -H "Content-Type: application/json" \
-  -d @solutions/demo/01-pure-chat/solution.json
+# 1. 配置 API Key
+cp .env.example .env
+# 编辑 .env 设置 CCAAS_API_KEY
 
-# 发送消息测试
-curl -X POST http://localhost:3001/api/v1/sessions/test-1/messages \
-  -H "Authorization: Bearer $API_KEY" \
+# 2. 导入 Demo（两种方式均可）
+cd 01-pure-chat && ../setup.sh    # 从子目录运行
+./setup.sh 01-pure-chat            # 从 demo/ 目录运行
+
+# 3. 测试
+curl -N -X POST https://ccaas.zhushou.one/api/v1/sessions/test-1/messages \
+  -H "Authorization: Bearer $CCAAS_API_KEY" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{"message":"你好","tenantId":"demo-02-pure-chat"}'
 ```
 
-### 方式二：Builder Key 流程
+`setup.sh` 自动完成：导入 solution.json（创建 tenant + MCP + 模板）→ 注册 Skills。
 
-```bash
-# 1. 管理员创建 Builder 用户
-curl -X POST http://localhost:3001/api/v1/admin/builder-users \
-  -H "Authorization: Bearer $ADMIN_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"email":"dev@example.com","name":"开发者","tenantName":"My Demo","tenantSlug":"my-demo"}'
-
-# 2. 用 Builder key 导入 solution
-curl -X POST http://localhost:3001/api/v1/admin/solutions/import \
-  -H "Authorization: Bearer $BUILDER_KEY" \
-  -H "Content-Type: application/json" \
-  -d @solutions/demo/04-write-output/solution.json
-
-# 3. 注册 Skill
-curl -X POST http://localhost:3001/api/v1/skills \
-  -H "Authorization: Bearer $BUILDER_KEY" \
-  -H "X-Tenant-Id: $TENANT_ID" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Demo Writer","slug":"demo-writer","content":"..."}'
-```
+默认连接 `https://ccaas.zhushou.one`，可通过 `.env` 中的 `CCAAS_URL` 修改。
 
 ### 有 MCP 的 Demo（04, 08, 11, 12）
 
-需要先构建 MCP 服务器：
-
-```bash
-cd solutions/demo/04-write-output/mcp-server
-npm install && npm run build
-```
+MCP 服务器由平台托管，`setup.sh` 会自动注册配置，无需本地构建。
 
 ## 文件结构规范
 
