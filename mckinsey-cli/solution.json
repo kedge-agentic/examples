@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "McKinsey Consultant",
+    "slug": "mckinsey-cli",
+    "description": "McKinsey-style business problem solving consultant"
+  }
+}
