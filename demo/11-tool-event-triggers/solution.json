@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Tool Event Triggers",
+    "slug": "demo-11-tool-event-triggers",
+    "description": "Demonstrates toolEventTriggers — MCP tools return plain JSON, and solution.json maps tool results to output_update events automatically"
+  },
+
+  "mcpServers": {
+    "demo-tools": {
+      "command": "node",
+      "args": ["mcp-server/dist/index.js"],
+      "description": "MCP server with calculate_score and generate_summary tools",
+      "type": "stdio",
+      "env": {}
+    }
+  },
+
+  "skills": [
+    { "slug": "scorer", "name": "scorer" }
+  ],
+
+  "toolEventTriggers": {
+    "calculate_score": {
+      "targetEvent": "output_update",
+      "fieldMapping": {
+        "score": "score",
+        "breakdown": "breakdown"
+      }
+    },
+    "generate_summary": {
+      "targetEvent": "output_update",
+      "fieldMapping": {
+        "summary": "summary"
+      }
+    }
+  }
+}

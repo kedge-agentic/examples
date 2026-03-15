@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: write_output Pattern",
+    "slug": "demo-01-write-output",
+    "description": "Demonstrates the correct write_output MCP tool pattern — value must be inside content[].text JSON, NOT in _meta"
+  },
+
+  "mcpServers": {
+    "demo-tools": {
+      "command": "node",
+      "args": ["mcp-server/dist/index.js"],
+      "description": "Demo MCP server showing the correct write_output pattern",
+      "type": "stdio",
+      "env": {}
+    }
+  },
+
+  "skills": [
+    { "slug": "demo-writer", "name": "demo-writer" }
+  ]
+}

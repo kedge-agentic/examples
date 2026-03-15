@@ -1,0 +1,48 @@
+{
+  "subject": "math",
+  "name": "数学",
+  "knowledgePoints": [
+    {
+      "id": "math-algebra-1",
+      "name": "一元一次方程",
+      "grade": "7",
+      "description": "含有一个未知数且未知数的最高次数是1的方程"
+    },
+    {
+      "id": "math-algebra-2",
+      "name": "二元一次方程组",
+      "grade": "7",
+      "description": "含有两个未知数的一次方程组"
+    },
+    {
+      "id": "math-algebra-3",
+      "name": "一元二次方程",
+      "grade": "9",
+      "description": "只含有一个未知数且未知数的最高次数是2的方程"
+    },
+    {
+      "id": "math-geometry-1",
+      "name": "勾股定理",
+      "grade": "8",
+      "description": "直角三角形两直角边的平方和等于斜边的平方"
+    },
+    {
+      "id": "math-geometry-2",
+      "name": "相似三角形",
+      "grade": "9",
+      "description": "对应角相等，对应边成比例的三角形"
+    },
+    {
+      "id": "math-function-1",
+      "name": "一次函数",
+      "grade": "8",
+      "description": "y = kx + b (k ≠ 0) 形式的函数"
+    },
+    {
+      "id": "math-function-2",
+      "name": "二次函数",
+      "grade": "9",
+      "description": "y = ax² + bx + c (a ≠ 0) 形式的函数"
+    }
+  ]
+}

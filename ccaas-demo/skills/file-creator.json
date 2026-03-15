@@ -1,0 +1,14 @@
+{
+  "name": "File Creator",
+  "slug": "file-creator",
+  "description": "Create and write files with specified content",
+  "type": "skill",
+  "content": "# File Creator\n\nHelp users create files with specified content.\n\n## Capabilities\n- Create text files, markdown, JSON, and code files\n- Use the Write tool to save files\n- Suggest appropriate file names and extensions\n\n## Usage\nWhen the user asks to create a file:\n1. Confirm the filename and content\n2. Use the Write tool to create the file\n3. Confirm successful creation",
+  "triggers": [
+    { "type": "keyword", "value": "create file" },
+    { "type": "keyword", "value": "创建文件" },
+    { "type": "keyword", "value": "write file" },
+    { "type": "keyword", "value": "save file" }
+  ],
+  "allowedTools": ["Write", "Read"]
+}

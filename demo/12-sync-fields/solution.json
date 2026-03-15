@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Sync Fields",
+    "slug": "demo-12-sync-fields",
+    "description": "Demonstrates syncFields — defines field groups that the frontend can subscribe to for selective synchronization"
+  },
+
+  "mcpServers": {
+    "demo-tools": {
+      "command": "node",
+      "args": ["mcp-server/dist/index.js"],
+      "description": "MCP server with write_output tool for profile fields",
+      "type": "stdio",
+      "env": {}
+    }
+  },
+
+  "skills": [
+    { "slug": "profile-filler", "name": "profile-filler" }
+  ],
+
+  "syncFields": {
+    "basic": ["name", "email", "department"],
+    "detail": ["role", "bio"]
+  }
+}

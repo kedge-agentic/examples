@@ -1,0 +1,24 @@
+{
+  "subject": "english",
+  "name": "英语",
+  "knowledgePoints": [
+    {
+      "id": "english-1",
+      "name": "时态",
+      "grade": "7",
+      "description": "一般现在时、一般过去时、现在进行时等"
+    },
+    {
+      "id": "english-2",
+      "name": "从句",
+      "grade": "9",
+      "description": "定语从句、状语从句、宾语从句"
+    },
+    {
+      "id": "english-3",
+      "name": "阅读理解",
+      "grade": "8",
+      "description": "主旨大意、细节理解、推理判断"
+    }
+  ]
+}

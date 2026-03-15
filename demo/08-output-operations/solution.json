@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Output Operations",
+    "slug": "demo-08-output-operations",
+    "description": "Demonstrates write_output with set, append, and merge operations for structured data manipulation"
+  },
+
+  "mcpServers": {
+    "demo-tools": {
+      "command": "node",
+      "args": ["mcp-server/dist/index.js"],
+      "description": "MCP server with write_output supporting set/append/merge operations",
+      "type": "stdio",
+      "env": {}
+    }
+  },
+
+  "skills": [
+    { "slug": "list-builder", "name": "list-builder" }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Pure Chat (No MCP)",
+    "slug": "demo-02-pure-chat",
+    "description": "The simplest possible Solution — just a skill, no MCP servers. Use this as your starting point."
+  },
+
+  "skills": [
+    { "slug": "friendly-chat", "name": "friendly-chat" }
+  ]
+}

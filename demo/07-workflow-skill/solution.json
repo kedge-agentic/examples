@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Workflow Skill",
+    "slug": "demo-07-workflow-skill",
+    "description": "Demonstrates a workflow-type skill that enforces sequential multi-step conversation flow"
+  },
+
+  "skills": [
+    { "slug": "survey-bot", "name": "survey-bot" }
+  ]
+}

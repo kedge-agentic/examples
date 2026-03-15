@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Skill Routing",
+    "slug": "demo-06-skill-routing",
+    "description": "Demonstrates skill routing with triggers — keyword and pattern triggers route messages to specialized skills, with a fallback default."
+  },
+
+  "skills": [
+    { "slug": "translator", "name": "translator" },
+    { "slug": "calculator", "name": "calculator" },
+    { "slug": "default-chat", "name": "default-chat" }
+  ]
+}

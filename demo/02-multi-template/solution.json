@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Multi-Template",
+    "slug": "demo-04-multi-template",
+    "description": "Demonstrates sessionTemplates — two templates (formal/casual) with different skills. Use --template to select."
+  },
+
+  "sessionTemplates": {
+    "formal": {
+      "description": "Formal mode — structured, professional responses",
+      "enabledSkills": ["formal-responder"],
+      "appendSystemPrompt": "Respond in a formal, professional tone. Use complete sentences. Avoid contractions and slang."
+    },
+    "casual": {
+      "description": "Casual mode — relaxed, conversational responses",
+      "enabledSkills": ["casual-responder"],
+      "appendSystemPrompt": "Respond in a casual, friendly tone. Keep it conversational and light."
+    }
+  },
+
+  "skills": [
+    { "slug": "formal-responder", "name": "formal-responder" },
+    { "slug": "casual-responder", "name": "casual-responder" }
+  ]
+}

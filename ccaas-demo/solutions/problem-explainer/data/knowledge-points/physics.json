@@ -1,0 +1,36 @@
+{
+  "subject": "physics",
+  "name": "物理",
+  "knowledgePoints": [
+    {
+      "id": "physics-mechanics-1",
+      "name": "力的概念",
+      "grade": "8",
+      "description": "力是物体对物体的作用，力的三要素"
+    },
+    {
+      "id": "physics-mechanics-2",
+      "name": "牛顿第一定律",
+      "grade": "9",
+      "description": "惯性定律：一切物体在没有受到力的作用时，总保持静止或匀速直线运动状态"
+    },
+    {
+      "id": "physics-mechanics-3",
+      "name": "牛顿第二定律",
+      "grade": "9",
+      "description": "F = ma，力、质量与加速度的关系"
+    },
+    {
+      "id": "physics-electricity-1",
+      "name": "电路基础",
+      "grade": "9",
+      "description": "串联电路和并联电路的特点"
+    },
+    {
+      "id": "physics-electricity-2",
+      "name": "欧姆定律",
+      "grade": "9",
+      "description": "I = U/R，电流、电压与电阻的关系"
+    }
+  ]
+}

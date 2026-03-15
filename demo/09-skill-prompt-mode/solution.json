@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Skill Prompt Mode",
+    "slug": "demo-09-skill-prompt-mode",
+    "description": "Demonstrates skillPromptMode — compare protocol mode (agent reads SKILL.md at runtime) vs inline mode (SKILL.md embedded in system prompt)."
+  },
+
+  "sessionTemplates": {
+    "protocol": {
+      "description": "Protocol mode — agent reads SKILL.md at runtime",
+      "enabledSkills": ["pirate-chat"],
+      "skillPromptMode": "protocol"
+    },
+    "inline": {
+      "description": "Inline mode — SKILL.md embedded in system prompt",
+      "enabledSkills": ["pirate-chat"],
+      "skillPromptMode": "inline"
+    }
+  },
+
+  "skills": [
+    { "slug": "pirate-chat", "name": "pirate-chat" }
+  ]
+}

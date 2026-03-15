@@ -1,0 +1,13 @@
+{
+  "subjects": [
+    { "id": "math", "name": "数学", "hasFormula": true },
+    { "id": "physics", "name": "物理", "hasFormula": true },
+    { "id": "chemistry", "name": "化学", "hasFormula": true },
+    { "id": "biology", "name": "生物", "hasFormula": false },
+    { "id": "chinese", "name": "语文", "hasFormula": false },
+    { "id": "english", "name": "英语", "hasFormula": false },
+    { "id": "history", "name": "历史", "hasFormula": false },
+    { "id": "geography", "name": "地理", "hasFormula": false },
+    { "id": "politics", "name": "政治", "hasFormula": false }
+  ]
+}

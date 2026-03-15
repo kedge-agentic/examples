@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Append System Prompt",
+    "slug": "demo-10-append-prompt",
+    "description": "Demonstrates appendSystemPrompt — same skill with three different system prompt overrides (concise, detailed, JSON)."
+  },
+
+  "sessionTemplates": {
+    "concise": {
+      "description": "Concise mode — answers under 50 words",
+      "enabledSkills": ["general-assistant"],
+      "appendSystemPrompt": "Keep all responses under 50 words. Be extremely brief and to the point."
+    },
+    "detailed": {
+      "description": "Detailed mode — thorough answers with examples",
+      "enabledSkills": ["general-assistant"],
+      "appendSystemPrompt": "Provide detailed, thorough answers. Include examples and explanations. Be comprehensive."
+    },
+    "json": {
+      "description": "JSON mode — answers in JSON format",
+      "enabledSkills": ["general-assistant"],
+      "appendSystemPrompt": "Always respond in valid JSON format. Structure your answer as a JSON object with relevant keys."
+    }
+  },
+
+  "skills": [
+    { "slug": "general-assistant", "name": "general-assistant" }
+  ]
+}

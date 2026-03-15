@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "3.0",
+
+  "tenant": {
+    "name": "Demo: Skill Frontmatter",
+    "slug": "demo-05-skill-frontmatter",
+    "description": "Demonstrates SKILL.md YAML frontmatter — triggers, metadata, and scope configuration without a separate JSON file."
+  },
+
+  "skills": [
+    { "slug": "greeting-bot", "name": "greeting-bot" }
+  ]
+}
